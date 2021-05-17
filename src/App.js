@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Stage, Layer, Line, Rect, Circle, Group } from 'react-konva';
+import { Stage, Layer, Line, Rect, Circle, Group, Text } from 'react-konva';
 
 const INITIAL_STATE = () => {
   const shapes = [];
-  for (var i = 0; i < 2; i++) {
+  for (var i = 0; i < 3; i++) {
     shapes.push({
       id: i,
       rectx: i * 220,
@@ -14,6 +14,8 @@ const INITIAL_STATE = () => {
       circle2y: 20,
       currentx: 0,
       currenty: 0,
+      isFill1 : false,
+      isFill2 : false,
     });
   }
   return shapes;
@@ -22,15 +24,27 @@ const INITIAL_STATE = () => {
 const App = () => {
   const [shapes, setShapes] = useState(INITIAL_STATE);
   const [connectors, setConnectors] = useState([]);
+  const [virtuals, setVirtuals] = useState([]);
   const [drawing, setDrawing] = useState(false);
+  const [virtualDrawing, setVirtualDrawing] = useState(false);
 
-  const [fromId, setFromId] = useState(0);
-  const [toId, setToId] = useState(0);
+  const [toX,setToX] = useState(0);
+  const [toY,setToY] = useState(0);
+  const [fromId, setFromId] = useState(null);
+  const [toId, setToId] = useState(null);
+  const [cursor,setCursor] = useState();
+  const [fill, setFill] = useState();
 
   const handleDragStart = (e) => {};
 
+  const handleDragMove = (e) =>{
+    var temp = [...shapes];
+    temp[e.target.id()].currentx = e.target.x();
+    temp[e.target.id()].currenty = e.target.y();
+    setShapes(temp);
+  }
+
   const handleDragEnd = (e) => {
-    console.log(e.target);
     var temp = [...shapes];
     temp[e.target.id()].currentx = e.target.x();
     temp[e.target.id()].currenty = e.target.y();
@@ -49,20 +63,42 @@ const App = () => {
   };
 
   const handleMouseDown = (e) => {
+
     if (drawing) {
       setFromId(e.target.id());
+      setVirtualDrawing(true);
+      setCursor("move");
     }
   };
   const handleMouseMove = (e) => {
     if (drawing) {
       setToId(e.target.id());
     }
+    if(cursor === "move"){
+      const container = e.target.getStage().container();
+      container.style.cursor = 'move';
+    }
+    setToX(e.evt.clientX);
+    setToY(e.evt.clientY);
+    // x,y ÁÂÇ¥ Ã£±â
+    if(virtualDrawing){
+      const newvirtual = {
+        from : fromId,
+        tox: toX,
+        toy: toY,
+      }
+      setVirtuals(virtuals.concat([newvirtual]));
+      setVirtualDrawing(false);
+    }
   };
   const handleMouseUp = (e) => {
     if (drawing) {
       setToId(e.target.id());
     }
-    if (fromId && toId) {
+    setCursor('default');
+    const container = e.target.getStage().container();
+    container.style.cursor = 'default';
+    if (fromId + '' && toId) {
       const newConnector = {
         from: fromId,
         to: toId,
@@ -70,6 +106,12 @@ const App = () => {
       setConnectors(connectors.concat([newConnector]));
       setFromId();
       setToId();
+      setVirtuals([]);
+      setToX();
+      setToY();
+      if (virtualDrawing){
+        setVirtualDrawing(false);
+      }
     }
   };
 
@@ -82,11 +124,52 @@ const App = () => {
       onMouseUp={handleMouseUp}
     >
       <Layer>
+        {
+          virtuals.map((v)=>{
+            var from = [];
+            shapes.map((shape)=>{
+              if (Math.floor(v.from / 2) === shape.id) {
+                if (v.from % 2 === 0) {
+                  from = {
+                    x: shape.circle1x + shape.currentx,
+                    y: shape.circle1y + shape.currenty,
+                  };
+                }
+                else {
+                  from = {
+                    x: shape.circle2x + shape.currentx,
+                    y: shape.circle2y + shape.currenty,
+                  };
+                }
+              }
+            })
+            return(
+              <>
+              <Line
+              key = {v.id}
+              points = {[from.x, from.y, toX, toY]}
+              stroke = "#BFFF00"
+              strokeWidth = {2}
+              lineCap = "round"
+              dash = {[5,5]}
+              dashEnabled
+              />
+              <Circle
+              key={v.id}
+              x={toX}
+              y={toY}
+              width={10}
+              height={10}
+              radius={5}
+              fill = {'#BFFF00'}
+              />
+              </>
+            )
+          })
+        }
         {connectors.map((con) => {
-          // console.log(con.from / 2);
           var from = [];
           var to = [];
-          console.log(con.from / 2, con.to / 2);
           shapes.map((shape) => {
             if (Math.floor(con.from / 2) === shape.id) {
               if (con.from % 2 === 0) {
@@ -95,7 +178,7 @@ const App = () => {
                   y: shape.circle1y + shape.currenty,
                 };
               }
-              if (con.from % 2 === 1) {
+              else {
                 from = {
                   x: shape.circle2x + shape.currentx,
                   y: shape.circle2y + shape.currenty,
@@ -109,7 +192,7 @@ const App = () => {
                   y: shape.circle1y + shape.currenty,
                 };
               }
-              if (con.to % 2 === 1) {
+              else {
                 to = {
                   x: shape.circle2x + shape.currentx,
                   y: shape.circle2y + shape.currenty,
@@ -117,14 +200,13 @@ const App = () => {
               }
             }
           });
-          // shapes.map((shape) => {
-          // });
-          console.log(from, to);
+          console.log(from,to);
           return (
             <Line
               key={con.id}
               points={[from.x, from.y, to.x, to.y]}
-              stroke="black"
+              stroke="#222222"
+              strokeWidth = {2}
             />
           );
         })}
@@ -133,6 +215,7 @@ const App = () => {
             id={shape.id}
             draggable={!drawing}
             onDragStart={handleDragStart}
+            onDragMove={handleDragMove}
             onDragEnd={handleDragEnd}
           >
             <Rect
@@ -140,7 +223,8 @@ const App = () => {
               y={shape.recty}
               width={200}
               height={200}
-              fill={'#333333'}
+              fill={'#555555'}
+              cornerRadius={5}
             />
             <Circle
               id={shape.id * 2}
@@ -151,15 +235,33 @@ const App = () => {
               width={10}
               height={10}
               radius={5}
-              fill={'#000000'}
+              stroke={'white'}
+              fill={shape.isFill1 ? '#BFFF00' : '#555555'}
               onMouseEnter={(e) => {
-                // style stage container:
                 const container = e.target.getStage().container();
                 container.style.cursor = 'pointer';
+                const id = e.target.id();
+                setShapes(
+                  shapes.map((shape)=>{
+                      return({
+                        ...shape,
+                        isFill1 : shape.id === Math.floor(id / 2),
+                      })
+                    }
+                ))
               }}
               onMouseLeave={(e) => {
                 const container = e.target.getStage().container();
                 container.style.cursor = 'default';
+                const id = e.target.id();
+                setShapes(
+                  shapes.map((shape)=>{
+                      return({
+                        ...shape,
+                        isFill1 : false,
+                      })
+                  })
+                )
               }}
               onMouseOver={preventDragStart}
               onMouseOut={preventDragEnd}
@@ -173,70 +275,48 @@ const App = () => {
               width={10}
               height={10}
               radius={5}
-              fill={'#000000'}
+              stroke={'white'}
+              fill={shape.isFill2? '#BFFF00' : '#555555'}
               onMouseEnter={(e) => {
-                // style stage container:
                 const container = e.target.getStage().container();
                 container.style.cursor = 'pointer';
+                const id = e.target.id();
+                setShapes(
+                  shapes.map((shape)=>{
+                      return({
+                        ...shape,
+                        isFill2 : shape.id === Math.floor(id / 2),
+                      })
+                  })
+                )
               }}
               onMouseLeave={(e) => {
                 const container = e.target.getStage().container();
                 container.style.cursor = 'default';
+                const id = e.target.id();
+                setShapes(
+                  shapes.map((shape)=>{
+                      return({
+                        ...shape,
+                        isFill2 : false,
+                      })
+                  })
+                )
               }}
               onMouseOver={preventDragStart}
               onMouseOut={preventDragEnd}
             />
           </Group>
         ))}
+      <Text
+        x=  {0}
+        y = {0}
+        text = {`x: ${toX} y: ${toY}`}
+        />
       </Layer>
     </Stage>
+
   );
 };
 
 export default App;
-
-// <Circle
-//   x={shape.initialx}
-//   y={shape.initialy}
-//   key={shape.id}
-//   fill={fromShapeId === shape.id ? 'red' : 'green'}
-//   radius={20}
-//   draggable
-//   shadowBlur={10}
-//   onDragStart={handleDragStart}
-//   onDragEnd={handleDragEnd}
-// onClick={() => {
-//   if (fromShapeId) {
-//     const newConnector = {
-//       from: fromShapeId,
-//       to: shape.id,
-//       id: connectors.length,
-//     };
-//     setConnectors(connectors.concat([newConnector]));
-//     setFromShapeId(null);
-//   } else {
-//     setFromShapeId(shape.id);
-//   }
-// }}
-
-{
-  /* {shapes.map((shape, i) => (
-          
-            <Rect
-              id={shape.id}
-              x={shape.initialx}
-              y={shape.initialy}
-              width={200}
-              height={200}
-              fill={'black'}
-            />
-            <Circle
-              id={shape.id}
-              x={shape.initialx}
-              y={shape.initialy}
-              width={10}
-              height={10}
-              fill={fromShapeId === shape.id ? 'red' : 'green'}
-            />
-        ))} */
-}
