@@ -7,22 +7,26 @@ import {
   calfrom,
   calto,
   INITIAL_STATE,
+  INITIAL_STATE_CON,
   makeShape,
 } from './Components/function.js';
-import { Stage, Layer } from 'react-konva';
+import { Text, Stage, Layer } from 'react-konva';
 
 const App = () => {
   const nextId = useRef(2);
   const [shapes, setShapes] = useState(INITIAL_STATE);
-  const [connectors, setConnectors] = useState([]);
+  const [connectors, setConnectors] = useState(INITIAL_STATE_CON);
   const [virtuals, setVirtuals] = useState([]);
   const [drawing, setDrawing] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [virtualDrawing, setVirtualDrawing] = useState(false);
+  const [debug, setDebug] = useState(false);
 
   const [toX, setToX] = useState(0);
   const [toY, setToY] = useState(0);
-  const [fromId, setFromId] = useState(null);
-  const [toId, setToId] = useState(null);
+  const [fromId, setFromId] = useState();
+
+  const [toId, setToId] = useState();
   const [cursor, setCursor] = useState();
 
   // onMouseDown
@@ -31,12 +35,13 @@ const App = () => {
       setFromId(e.target.id());
       setVirtualDrawing(true);
       setCursor('move');
+      setDragging(true);
     }
   };
 
   // onMouseMove
   const handleMouseMove = (e) => {
-    if (drawing) {
+    if (drawing && dragging) {
       setToId(e.target.id());
     }
     if (cursor === 'move') {
@@ -61,9 +66,10 @@ const App = () => {
   const handleMouseUp = (e) => {
     if (drawing) {
       setToId(e.target.id());
-      setToX();
-      setToY();
+      setFromId();
+      setToId();
       setDrawing(false);
+      setDragging(false);
     }
     setCursor('default');
     const container = e.target.getStage().container();
@@ -80,6 +86,9 @@ const App = () => {
         setVirtuals([]);
       }
     }
+    setFromId();
+    setToId();
+    setDragging();
   };
 
   const handleOnClick = (e) => {
@@ -87,6 +96,11 @@ const App = () => {
     setShapes([...shapes, shape]);
     nextId.current += 1;
   };
+
+  const changeDebug = (e) => {
+    debug ? setDebug(false) : setDebug(true);
+  };
+
   // rendering
   return (
     <Stage
@@ -97,7 +111,8 @@ const App = () => {
       onMouseUp={handleMouseUp}
     >
       <Layer>
-        <Button handleOnClick={handleOnClick} />
+        <Button handleOnClick={handleOnClick} x={20} text={'create'} />
+        <Button handleOnClick={changeDebug} x={320} text={'debug'} />
         {virtuals.map((v, i) => {
           var from = [];
           shapes.map((shape) => {
@@ -120,6 +135,9 @@ const App = () => {
             }
             return shape;
           });
+          if (!from && !to) {
+            return null;
+          }
           return <Connectors key={i} id={con.id} from={from} to={to} />;
         })}
         <Shapes
@@ -127,7 +145,24 @@ const App = () => {
           setDrawing={setDrawing}
           shapes={shapes}
           setShapes={setShapes}
+          setToId={setToId}
         />
+        {debug ? (
+          <Text
+            x={window.innerWidth / 2}
+            y={20}
+            fontSize={20}
+            text={`
+            From.Id : ${fromId + '' ? fromId : false}
+            To.Id : ${toId + '' ? toId : false}
+
+            Mouse.X : ${toX}
+            Mouse.Y : ${toY}
+
+            Drawing Now? : ${dragging ? true : false}
+            `}
+          />
+        ) : null}
       </Layer>
     </Stage>
   );

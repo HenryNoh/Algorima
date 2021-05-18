@@ -50,6 +50,23 @@ export const INITIAL_STATE = () => {
   return shapes;
 };
 
+export const INITIAL_STATE_CON = () => {
+  const connectors = [];
+  for (var i = 0; i < 1; i++) {
+    connectors.push({
+      from: {
+        x: -1,
+        y: -1,
+      },
+      to: {
+        x: -1,
+        y: -1,
+      },
+    });
+  }
+  return connectors;
+};
+
 export const makeShape = (nextId) => {
   const randomx = Math.random();
   const randomy = Math.random();

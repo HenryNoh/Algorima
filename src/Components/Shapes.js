@@ -49,6 +49,7 @@ const Shapes = (props) => {
   const handleMouseLeave = (e) => {
     const container = e.target.getStage().container();
     container.style.cursor = 'default';
+    props.setToId();
     props.setShapes(
       props.shapes.map((shape) => {
         return {

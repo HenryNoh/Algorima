@@ -18,7 +18,7 @@ const Button = (props) => {
       }}
     >
       <Rect
-        x={20}
+        x={props.x}
         y={20}
         width={100}
         height={50}
@@ -27,12 +27,12 @@ const Button = (props) => {
         cornerRadius={5}
       />
       <Text
-        x={30}
+        x={props.x + 10}
         y={30}
         width={window.innerWidth / 8}
         height={30}
         fontSize={30}
-        text={'create'}
+        text={props.text}
         stroke={'black'}
       />
     </Group>
