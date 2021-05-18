@@ -39,20 +39,22 @@ Rect와 Text를 사용하여 구성하였습니다.
 ## **Logic**
 
 #### 1.
-shape의 실시간 좌표값을 저장하기 위하여 shape가 drag될 때 shape의 currentx, currenty값을 계속해서 변경해줍니다.  
-shape의 circle로 cursor가 들어오며 나갈때 drawing 변수를 true로 바꾸어 draggable을 방지해줍니다. (onMouseOver , onMouseOut)  
-shape의 circle로 cursor가 들어와있거나 나가있을 때 circle의 fill 값을 변경해줍니다. (onMouseEnter, onMouseLeave)  
+- shape의 실시간 좌표값을 저장하기 위하여 shape가 drag될 때 shape의 currentx, currenty값을 계속해서 변경해줍니다.  
+- shape의 circle로 cursor가 들어오며 나갈때 drawing 변수를 true로 바꾸어 draggable을 방지해줍니다. (onMouseOver , onMouseOut)  
+- shape의 circle로 cursor가 들어와있거나 나가있을 때 circle의 fill 값을 변경해줍니다. (onMouseEnter, onMouseLeave)  
   
 #### 2.
-Stage에서 Mousedown이 될 때 drawing이 true일 경우 선을 긋기 시작합니다. (onMouseDown)  
-  원에 들어 왔을 경우 FromId를 해당 원의 id로 정해줍니다.  
-Stage에서 MouseMove일 경우 cursor를 'move'로 바꾸어줍니다.  
-  FromID와 toX와 toY를 이용하여 virtuals를 생성해줍니다.  
-  virtuals는 1번만 그립니다.  
-Stage에서 MouseUp이 될 때 cursor를 'default'로 바꾸어줍니다.  
-  원에 들어 왔을 경우 ToId를 해당 원의 id로 정해줍니다.  
-  FromId와 ToId를 이용하여 Connectors를 생성해줍니다.  
+- Stage에서 Mousedown이 될 때 drawing이 true일 경우 선을 긋기 시작합니다. (onMouseDown)  
+  - 원에 들어 왔을 경우 FromId를 해당 원의 id로 정해줍니다.  
+  
+- Stage에서 MouseMove일 경우 cursor를 'move'로 바꾸어줍니다.  
+  - FromID와 toX와 toY를 이용하여 virtuals를 생성해줍니다.  
+  - virtuals는 1번만 그립니다.  
+  
+- Stage에서 MouseUp이 될 때 cursor를 'default'로 바꾸어줍니다.  
+  - 원에 들어 왔을 경우 ToId를 해당 원의 id로 정해줍니다.  
+  - FromId와 ToId를 이용하여 Connectors를 생성해줍니다.  
   
 #### 3.
-handleOnClick 함수는 Create 버튼 클릭 시 shape를 생성하기 위한 함수입니다.  
-changeDebug 함수는 debug 버튼 on/off를 위한 함수입니다.  
+- handleOnClick 함수는 Create 버튼 클릭 시 shape를 생성하기 위한 함수입니다.  
+- changeDebug 함수는 debug 버튼 on/off를 위한 함수입니다.  
