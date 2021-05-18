@@ -2,8 +2,10 @@ import React from 'react';
 import { Rect, Circle, Group } from 'react-konva';
 
 const Shapes = (props) => {
+  //DragStart Shape
   const handleDragStart = (e) => {};
 
+  //DragMove Shape
   const handleDragMove = (e) => {
     var temp = [...props.shapes];
     temp[e.target.id()].currentx = e.target.x();
@@ -11,6 +13,7 @@ const Shapes = (props) => {
     props.setShapes(temp);
   };
 
+  //DragEnd Shape
   const handleDragEnd = (e) => {
     var temp = [...props.shapes];
     temp[e.target.id()].currentx = e.target.x();
@@ -18,6 +21,7 @@ const Shapes = (props) => {
     props.setShapes(temp);
   };
 
+  //MouseEnter to left circle
   const handleMouseEnter1 = (e) => {
     const container = e.target.getStage().container();
     container.style.cursor = 'pointer';
@@ -32,6 +36,7 @@ const Shapes = (props) => {
     );
   };
 
+  //MouseEnter to right circle
   const handleMouseEnter2 = (e) => {
     const container = e.target.getStage().container();
     container.style.cursor = 'pointer';
@@ -46,6 +51,7 @@ const Shapes = (props) => {
     );
   };
 
+  //MouseLeave from circle
   const handleMouseLeave = (e) => {
     const container = e.target.getStage().container();
     container.style.cursor = 'default';
@@ -61,16 +67,20 @@ const Shapes = (props) => {
     );
   };
 
+  //MouseOver to circle
   const preventDragStart = (e) => {
     if (!props.drawing) {
       props.setDrawing(true);
     }
   };
+
+  //MouseOut from circle
   const preventDragEnd = (e) => {
     if (props.drawing) {
       props.setDrawing(false);
     }
   };
+
   return (
     <>
       {props.shapes.map((shape) => (

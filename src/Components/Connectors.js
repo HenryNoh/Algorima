@@ -5,7 +5,7 @@ const Connectors = (props) => {
     <Line
       key={props.id}
       points={
-        props.from && props.to
+        props.from.x && props.from.y && props.to.x && props.to.y
           ? [props.from.x, props.from.y, props.to.x, props.to.y]
           : [-1, -1, -1, -1]
       }

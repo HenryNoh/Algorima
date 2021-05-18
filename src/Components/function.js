@@ -1,3 +1,4 @@
+//calculate from
 export const calfrom = (con, shape) => {
   var from = [];
   if (con.from % 2 === 0) {
@@ -14,6 +15,7 @@ export const calfrom = (con, shape) => {
   return from;
 };
 
+//calculate to
 export const calto = (con, shape) => {
   var to = [];
   if (con.to % 2 === 0) {
@@ -30,6 +32,7 @@ export const calto = (con, shape) => {
   return to;
 };
 
+//Make Shape Initial State
 export const INITIAL_STATE = () => {
   const shapes = [];
   for (var i = 0; i < 2; i++) {
@@ -50,23 +53,7 @@ export const INITIAL_STATE = () => {
   return shapes;
 };
 
-export const INITIAL_STATE_CON = () => {
-  const connectors = [];
-  for (var i = 0; i < 1; i++) {
-    connectors.push({
-      from: {
-        x: -1,
-        y: -1,
-      },
-      to: {
-        x: -1,
-        y: -1,
-      },
-    });
-  }
-  return connectors;
-};
-
+//Make new Shape
 export const makeShape = (nextId) => {
   const randomx = Math.random();
   const randomy = Math.random();

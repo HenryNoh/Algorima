@@ -7,7 +7,6 @@ import {
   calfrom,
   calto,
   INITIAL_STATE,
-  INITIAL_STATE_CON,
   makeShape,
 } from './Components/function.js';
 import { Text, Stage, Layer } from 'react-konva';
@@ -15,7 +14,7 @@ import { Text, Stage, Layer } from 'react-konva';
 const App = () => {
   const nextId = useRef(2);
   const [shapes, setShapes] = useState(INITIAL_STATE);
-  const [connectors, setConnectors] = useState(INITIAL_STATE_CON);
+  const [connectors, setConnectors] = useState([]);
   const [virtuals, setVirtuals] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -91,12 +90,12 @@ const App = () => {
     setDragging();
   };
 
+  //onClick
   const handleOnClick = (e) => {
     const shape = makeShape(nextId);
     setShapes([...shapes, shape]);
     nextId.current += 1;
   };
-
   const changeDebug = (e) => {
     debug ? setDebug(false) : setDebug(true);
   };
@@ -111,8 +110,11 @@ const App = () => {
       onMouseUp={handleMouseUp}
     >
       <Layer>
+        {/* Create Button */}
         <Button handleOnClick={handleOnClick} x={20} text={'create'} />
+        {/* Debug Button */}
         <Button handleOnClick={changeDebug} x={320} text={'debug'} />
+        {/* virtuals */}
         {virtuals.map((v, i) => {
           var from = [];
           shapes.map((shape) => {
@@ -123,6 +125,7 @@ const App = () => {
           });
           return <Virtuals key={i} id={v.id} from={from} toX={toX} toY={toY} />;
         })}
+        {/* connectors */}
         {connectors.map((con, i) => {
           var from = [];
           var to = [];
@@ -140,6 +143,7 @@ const App = () => {
           }
           return <Connectors key={i} id={con.id} from={from} to={to} />;
         })}
+        {/* Shapes */}
         <Shapes
           drawing={drawing}
           setDrawing={setDrawing}
@@ -147,6 +151,7 @@ const App = () => {
           setShapes={setShapes}
           setToId={setToId}
         />
+        {/* Debug Text */}
         {debug ? (
           <Text
             x={window.innerWidth / 2}
