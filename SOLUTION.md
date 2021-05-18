@@ -1,4 +1,4 @@
-**## Component**
+## **Components**
 
 #### 1. Shapes.js
 영상의 두 원과 한개의 사각형을 Group으로 묶어놓은 Component입니다.
@@ -35,7 +35,8 @@ Rect와 Text를 사용하여 구성하였습니다.
 
 또한 초기 상태를 생성하는 INITIAL_STATE 새로운 shape를 생성하는 makeShape 함수가 있습니다.
 
-**## Logic**
+
+## **Logic**
 
 #### 1.
 shape의 실시간 좌표값을 저장하기 위하여 shape가 drag될 때 shape의 currentx, currenty값을 계속해서 변경해줍니다.
