@@ -88,6 +88,7 @@ const Shapes = (props) => {
             width={200}
             height={200}
             fill={'#555555'}
+            stroke={'black'}
             cornerRadius={5}
           />
           <Circle
