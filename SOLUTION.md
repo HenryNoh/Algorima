@@ -40,7 +40,9 @@ Rect와 Text를 사용하여 구성하였습니다.
   
 또한 초기 상태를 생성하는 INITIAL_STATE 새로운 shape를 생성하는 makeShape 함수가 있습니다.  
   
-  
+    
+      
+        
 ## **Logic**
   
 #### 1.
